@@ -105,7 +105,8 @@ for(var i in Object.keys(myData)){
         value+=`<td>${myData[i][val]}</td>`;
    }
    value+=`<td id="button1"> <button id="onEditing" onClick="onEdit(this)">Edit</button> <button id="onDeleting"
-   onClick="onDelete(this)">Delete</button> </td></tr>`;
+   onClick="onDelete(this)">Delete</button> </td>`;
+   value+="</tr>";
 }
 
 
@@ -122,9 +123,16 @@ for(var i in Object.keys(myData)){
 function onEdit(tr){
     row=tr.parentElement.parentElement; 
     row.setAttribute('contenteditable',true);
-    // tr.style.display='none';
-    // tr.style.display='none';
+    
+    
+
+
+
     row.children[Object.keys(myData[0]).length].setAttribute('contenteditable',false);
+    
+    tds=tr.parentElement.remove();
+
+
     if(!this.inEditing(row)){
     row.className='in-editing';
     row.setAttribute('old-data',row.innerHTML);
@@ -138,10 +146,10 @@ function inEditing(row){
 }
 
 function createButton(row){
-    const buttons=document.createElement('div');
+    const buttons=document.createElement('td');
     buttons.className="button-toolbar";
-    buttons.innerHTML= `  <button class="save-button">Save</button>  <button class="cancel-button">Cancel</button>   `;
-    row.children[Object.keys(myData[0]).length].append(buttons);
+    buttons.innerHTML= ` <button class="save-button">Save</button>  <button class="cancel-button">Cancel</button>  `;
+    row.appendChild(buttons);
     buttons.setAttribute('contenteditable',false);
 
 
@@ -161,11 +169,20 @@ function createButton(row){
 function cancel(row){
     row.innerHTML=row.getAttribute('old-data');
     row.classList.remove('in-editing');
+
+    const btns=document.createElement('td');
+    btns.innerHTML=` <button id="onEditing" onClick="onEdit(this)">Edit</button> <button id="onDeleting"
+    onClick="onDelete(this)">Delete</button> `;
+    row.appendChild(btns);
+    row.setAttribute('contenteditable',false);
 }
 
 function save(row){
     row.classList.remove('in-editing');
     this.removeButtons(row);
+    row.setAttribute('contenteditable',false);
+    
+
     
 }
 
@@ -173,6 +190,11 @@ function save(row){
 function removeButtons(row){
     const btn=row.querySelector('.button-toolbar');
     btn.remove();
+
+    const btns=document.createElement('td');
+    btns.innerHTML=` <button id="onEditing" onClick="onEdit(this)">Edit</button> <button id="onDeleting"
+    onClick="onDelete(this)">Delete</button> `;
+    row.appendChild(btns);
 }
 function onDelete(td){
     if(confirm("Are you sure to delete this record ?")){
