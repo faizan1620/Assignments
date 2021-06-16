@@ -1,3 +1,5 @@
+//JSON data
+
 const myData = [
     {
         First_Name:"Mr.",
