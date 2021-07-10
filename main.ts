@@ -1,18 +1,19 @@
+"use-strict"
+
 enum Role{
     Subscriber,
     Admin,
     SuperAdmin
 }
-const myData:object= [
+const myData:Model<string,number>[]= [
     {
         First_Name:"Mr.",
         Middle_Name:"Faizan",
         Last_Name:"Alam",
         Email:"faizan1620@gmail.com",
-        Phone_Number:9955171847,
+        Phone_Number:9890123451,
         Role:Role[0],
         Address:"supaul"
-        
     },
 
     {
@@ -20,7 +21,7 @@ const myData:object= [
         Middle_Name:"Megha",
         Last_Name:"Agarwal",
         Email:"meghaa@gmail.com",
-        Phone_Number:999999999,
+        Phone_Number:9999999992,
         Role:Role[1],
         Address:"bihar"
         
@@ -31,7 +32,7 @@ const myData:object= [
         Middle_Name:"Sharique",
         Last_Name:"Khan",
         Email:"sharique@gmail.com",
-        Phone_Number:62101725232,
+        Phone_Number:6210172523,
         Role:Role[0],
         Address:"Kishanganj"
 
@@ -42,7 +43,7 @@ const myData:object= [
         Middle_Name:"Sachin",
         Last_Name:"Kumar",
         Email:"sachin@gmail.com",
-        Phone_Number:990000047,
+        Phone_Number:9290123420,
         Role:Role[2],
         Address:"Patna"
 
@@ -53,7 +54,7 @@ const myData:object= [
         Middle_Name:"Akshay",
         Last_Name:"Kumar",
         Email:"akshay@gmail.com",
-        Phone_Number:88890171847,
+        Phone_Number:8889017184,
         Role:Role[1],
         Address:"Punjab"
 
@@ -64,7 +65,7 @@ const myData:object= [
         Middle_Name:"Alok",
         Last_Name:"Kumar",
         Email:"alok@gmail.com",
-        Phone_Number:880901847,
+        Phone_Number:8809018473,
         Role:Role[0],
         Address:"Hariyana"
 
@@ -86,7 +87,7 @@ const myData:object= [
         Middle_Name:"Danish",
         Last_Name:"Raza",
         Email:"danish@gmail.com",
-        Phone_Number:748862847,
+        Phone_Number:7488628477,
         Role:Role[1],
         Address:"Bihar"
 
@@ -103,6 +104,16 @@ interface crud<T>{
      deleteData<T>(td:any);
 }
 
+//  :::: Decorator Factory ::::
+
+function FormatDate(constructorFn:Function){
+     const dtm=document.getElementById("datetime") as HTMLInputElement;
+     setInterval(function() {
+        dtm.innerHTML=new Date().toLocaleString();
+    }, 1000);
+
+}
+
 
 class Model<T,U> {
         First_Name:T;
@@ -110,25 +121,26 @@ class Model<T,U> {
         Last_Name:T;
         Email:T;
         Phone_Number:U;
-        Role:Role;
+        Role:string;
         Address:T;
-
 }
 
-
+@FormatDate    //Decorator here...
 class MyClass extends Model<string,number> implements crud<void>{
 
 //Methods implemented from the interface
 
 
-    @FormatDate    //Decorator here...
+    
     createData<T>() {
         var addR:any=document.getElementById("list") as HTMLTableElement;
         var newR=addR.insertRow();
         var newC:any;
-        for(var val in myData[0])
-           newC=newR.insertCell();
+
+        for(let i=0;i<7;i++)
+        newR.insertCell();
         const btns=document.createElement('td');
+        btns.id='button1';
         btns.innerHTML=` <button id="onEditing" onClick="new MyClass.updateData(this)">Edit</button> <button id="onDeleting"
          onClick="new MyClass().deleteData(this)">Delete</button> `;
         newR.appendChild(btns);
@@ -140,23 +152,38 @@ class MyClass extends Model<string,number> implements crud<void>{
     readData<T>(){
         document.getElementById("firstButton").innerHTML="Refresh Data";
         var text=`<div class="tabledata"><table align="center" id="list"><tr>`;
-
-        for(var key in myData[0]){
-             text+=`<th>${key}</th>`;
-        }
+        text+=`<th>First Name</th>`;
+        text+=`<th>Middle Name</th>`;
+        text+=`<th>Last Name</th>`;
+        text+=`<th>Email</th>`;
+        text+=`<th>Phone No.</th>`;
+        text+=`<th>Role</th>`;
+        text+=`<th>Address</th>`;
+        
 
         text+="<th></th></tr>";
         var value="<tr>";
         
         for(var i in Object.keys(myData)){
-
+            
                 this.First_Name=myData[i]["First_Name"];
-                this.Middle_Name=myData[i]["Middle_Name"];
+
+                
+                this.Middle_Name= myData[i]["Middle_Name"];
+               
+                
                 this.Last_Name=myData[i]["Last_Name"];
+             
                 this.Email=myData[i]["Email"];
+               
                 this.Phone_Number=myData[i]["Phone_Number"];
+
+              
                 this.Role=myData[i]["Role"];
+              
                 this.Address=myData[i]["Address"];
+           
+           
                 
                 value+=`<td>${this.First_Name}</td>`;
                 value+=`<td>${this.Middle_Name}</td>`;
@@ -180,11 +207,13 @@ class MyClass extends Model<string,number> implements crud<void>{
         `;
     }
 
+
+
     updateData<T>(tr:any){
 
         var row:any=tr.parentElement.parentElement; 
         row.setAttribute('contenteditable',true);
-        row.children[Object.keys(myData[0]).length].setAttribute('contenteditable',false);
+        row.children[7].setAttribute('contenteditable',false);
         var tds:any=tr.parentElement.remove();
         if(!this.inEditing(row)){
         row.className='in-editing';
@@ -234,14 +263,68 @@ class MyClass extends Model<string,number> implements crud<void>{
 
     save<T>(row:any){
         row.classList.remove('in-editing');
-        this.removeButtons(row);
-        row.setAttribute('contenteditable',false);
+        //var rw=row.children[4];
+
+        var isCorrect:boolean=true;
+        var fname=/^[a-zA-Z+.]+$/;
+        var letters = /^[A-Za-z]+$/;
+        var phoneno= /^\d{10}$/;
+        var email=/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        var address=/^[a-zA-Z0-9\s,'-]*$/;
+
+        if(!row.children[0].innerHTML.match(fname))
+        {
+            alert("Error! Please Enter valid First Name");
+            isCorrect=false;
+        }
+
+        if(!row.children[1].innerHTML.match(letters))
+        {
+            alert("Error! Please Enter valid Middle Name");
+            isCorrect=false;
+        }
+
+        if(!row.children[2].innerHTML.match(letters))
+        {
+            alert("Error! Please Enter valid Last Number");
+        }
+
+        if(!row.children[3].innerHTML.match(email))
+        {
+            alert("Error! Please Enter valid Email Id");
+            isCorrect=false;
+        }
+
+        if(!row.children[4].innerHTML.match(phoneno))
+        {
+            alert("Error! Please Enter valid Phone Number");
+            isCorrect=false;
+        }
+        if(row.children[5].innerHTML!=Role[0] && row.children[5].innerHTML!=Role[1] && row.children[5].innerHTML!=Role[2])
+        
+        {
+            console.log(row.children[5].innerHTML);
+            alert("Error! Please Enter valid Role");
+            isCorrect=false;
+        }
+
+        if(!row.children[6].innerHTML.match(address))
+        {
+            alert("Error! Please Enter valid Address");
+            isCorrect=false;
+        }
+        
+        if(isCorrect){
+            this.removeButtons(row);
+            row.setAttribute('contenteditable',false); 
+            alert("Data Saved Successfully !!");  
+        }
+        
     }
 
     removeButtons<T>(row:any){
         const btn=row.querySelector('.button-toolbar');
         btn.remove();
-    
         const btns=document.createElement('td');
         btns.innerHTML=` <button id="onEditing" onClick="new MyClass().updateData(this)">Edit</button> <button id="onDeleting"
         onClick="new MyClass().deleteData(this)">Delete</button> `;
@@ -258,25 +341,8 @@ class MyClass extends Model<string,number> implements crud<void>{
         row.appendChild(btns);
         row.setAttribute('contenteditable',false);
     }
-
-
-    
-        
-    
-       
+   
 }
-
-//  :::: Decorator Factory ::::
-
-function FormatDate(target:any,name:string,descriptor:PropertyDescriptor){
-     const dtm=document.getElementById("datetime") as HTMLInputElement;
-     setInterval(function() {
-        dtm.innerHTML=new Date().toLocaleString();
-    }, 1000);
-
-}
-
-
 
 
 function main<T>(){

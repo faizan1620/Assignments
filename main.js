@@ -1,3 +1,4 @@
+"use-strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26,7 +27,7 @@ var myData = [
         Middle_Name: "Faizan",
         Last_Name: "Alam",
         Email: "faizan1620@gmail.com",
-        Phone_Number: 9955171847,
+        Phone_Number: 9890123451,
         Role: Role[0],
         Address: "supaul"
     },
@@ -35,7 +36,7 @@ var myData = [
         Middle_Name: "Megha",
         Last_Name: "Agarwal",
         Email: "meghaa@gmail.com",
-        Phone_Number: 999999999,
+        Phone_Number: 9999999992,
         Role: Role[1],
         Address: "bihar"
     },
@@ -44,7 +45,7 @@ var myData = [
         Middle_Name: "Sharique",
         Last_Name: "Khan",
         Email: "sharique@gmail.com",
-        Phone_Number: 62101725232,
+        Phone_Number: 6210172523,
         Role: Role[0],
         Address: "Kishanganj"
     },
@@ -53,7 +54,7 @@ var myData = [
         Middle_Name: "Sachin",
         Last_Name: "Kumar",
         Email: "sachin@gmail.com",
-        Phone_Number: 990000047,
+        Phone_Number: 9290123420,
         Role: Role[2],
         Address: "Patna"
     },
@@ -62,7 +63,7 @@ var myData = [
         Middle_Name: "Akshay",
         Last_Name: "Kumar",
         Email: "akshay@gmail.com",
-        Phone_Number: 88890171847,
+        Phone_Number: 8889017184,
         Role: Role[1],
         Address: "Punjab"
     },
@@ -71,7 +72,7 @@ var myData = [
         Middle_Name: "Alok",
         Last_Name: "Kumar",
         Email: "alok@gmail.com",
-        Phone_Number: 880901847,
+        Phone_Number: 8809018473,
         Role: Role[0],
         Address: "Hariyana"
     },
@@ -89,11 +90,18 @@ var myData = [
         Middle_Name: "Danish",
         Last_Name: "Raza",
         Email: "danish@gmail.com",
-        Phone_Number: 748862847,
+        Phone_Number: 7488628477,
         Role: Role[1],
         Address: "Bihar"
     }
 ];
+//  :::: Decorator Factory ::::
+function FormatDate(constructorFn) {
+    var dtm = document.getElementById("datetime");
+    setInterval(function () {
+        dtm.innerHTML = new Date().toLocaleString();
+    }, 1000);
+}
 var Model = /** @class */ (function () {
     function Model() {
     }
@@ -109,9 +117,10 @@ var MyClass = /** @class */ (function (_super) {
         var addR = document.getElementById("list");
         var newR = addR.insertRow();
         var newC;
-        for (var val in myData[0])
-            newC = newR.insertCell();
+        for (var i = 0; i < 7; i++)
+            newR.insertCell();
         var btns = document.createElement('td');
+        btns.id = 'button1';
         btns.innerHTML = " <button id=\"onEditing\" onClick=\"new MyClass.updateData(this)\">Edit</button> <button id=\"onDeleting\"\n         onClick=\"new MyClass().deleteData(this)\">Delete</button> ";
         newR.appendChild(btns);
         this.updateData(btns.firstChild);
@@ -119,9 +128,13 @@ var MyClass = /** @class */ (function (_super) {
     MyClass.prototype.readData = function () {
         document.getElementById("firstButton").innerHTML = "Refresh Data";
         var text = "<div class=\"tabledata\"><table align=\"center\" id=\"list\"><tr>";
-        for (var key in myData[0]) {
-            text += "<th>" + key + "</th>";
-        }
+        text += "<th>First Name</th>";
+        text += "<th>Middle Name</th>";
+        text += "<th>Last Name</th>";
+        text += "<th>Email</th>";
+        text += "<th>Phone No.</th>";
+        text += "<th>Role</th>";
+        text += "<th>Address</th>";
         text += "<th></th></tr>";
         var value = "<tr>";
         for (var i in Object.keys(myData)) {
@@ -147,7 +160,7 @@ var MyClass = /** @class */ (function (_super) {
     MyClass.prototype.updateData = function (tr) {
         var row = tr.parentElement.parentElement;
         row.setAttribute('contenteditable', true);
-        row.children[Object.keys(myData[0]).length].setAttribute('contenteditable', false);
+        row.children[7].setAttribute('contenteditable', false);
         var tds = tr.parentElement.remove();
         if (!this.inEditing(row)) {
             row.className = 'in-editing';
@@ -186,8 +199,46 @@ var MyClass = /** @class */ (function (_super) {
     };
     MyClass.prototype.save = function (row) {
         row.classList.remove('in-editing');
-        this.removeButtons(row);
-        row.setAttribute('contenteditable', false);
+        //var rw=row.children[4];
+        var isCorrect = true;
+        var fname = /^[a-zA-Z+.]+$/;
+        var letters = /^[A-Za-z]+$/;
+        var phoneno = /^\d{10}$/;
+        var email = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        var address = /^[a-zA-Z0-9\s,'-]*$/;
+        if (!row.children[0].innerHTML.match(fname)) {
+            alert("Error! Please Enter valid First Name");
+            isCorrect = false;
+        }
+        if (!row.children[1].innerHTML.match(letters)) {
+            alert("Error! Please Enter valid Middle Name");
+            isCorrect = false;
+        }
+        if (!row.children[2].innerHTML.match(letters)) {
+            alert("Error! Please Enter valid Last Number");
+        }
+        if (!row.children[3].innerHTML.match(email)) {
+            alert("Error! Please Enter valid Email Id");
+            isCorrect = false;
+        }
+        if (!row.children[4].innerHTML.match(phoneno)) {
+            alert("Error! Please Enter valid Phone Number");
+            isCorrect = false;
+        }
+        if (row.children[5].innerHTML != Role[0] && row.children[5].innerHTML != Role[1] && row.children[5].innerHTML != Role[2]) {
+            console.log(row.children[5].innerHTML);
+            alert("Error! Please Enter valid Role");
+            isCorrect = false;
+        }
+        if (!row.children[6].innerHTML.match(address)) {
+            alert("Error! Please Enter valid Address");
+            isCorrect = false;
+        }
+        if (isCorrect) {
+            this.removeButtons(row);
+            row.setAttribute('contenteditable', false);
+            alert("Data Saved Successfully !!");
+        }
     };
     MyClass.prototype.removeButtons = function (row) {
         var btn = row.querySelector('.button-toolbar');
@@ -204,18 +255,11 @@ var MyClass = /** @class */ (function (_super) {
         row.appendChild(btns);
         row.setAttribute('contenteditable', false);
     };
-    __decorate([
+    MyClass = __decorate([
         FormatDate //Decorator here...
-    ], MyClass.prototype, "createData");
+    ], MyClass);
     return MyClass;
 }(Model));
-//  :::: Decorator Factory ::::
-function FormatDate(target, name, descriptor) {
-    var dtm = document.getElementById("datetime");
-    setInterval(function () {
-        dtm.innerHTML = new Date().toLocaleString();
-    }, 1000);
-}
 function main() {
     var obj = new MyClass();
     obj.readData();
